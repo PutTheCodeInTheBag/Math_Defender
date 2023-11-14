@@ -1,0 +1,92 @@
+
+/*
+	Estilização do input
+*/
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+	
+}
+
+input[type="number"]:active {
+	border: none;
+}
+
+input[type="number"]:focus {
+	caret-color: transparent;
+}
+
+#input_container {
+	width: 50vw;
+	height: 50px;
+	margin: auto;
+	background: linear-gradient(to right, rgba(42, 30, 92, 0.4), rgba(86, 136, 199, 0.4));
+	border-radius: 40px;
+	border: none;
+	position: fixed;
+	display: flex;
+	bottom: 1.5%;
+	left: 0;
+	right: 0;
+}
+
+#send_input {
+	border: none;
+	border-radius: 0 40px 40px 0;
+	width: 10%;
+	height: 50px;
+	background: transparent;
+	padding: 1%;
+	font-size: 100%;
+}
+
+#send_input:hover, #send_input:active {
+	border: 1px solid white;
+}
+
+#answer_input {
+	text-align: center;
+	color: white;
+	border: none;
+	border-radius: 40px 0 0 40px;
+	background: transparent;
+	width: 90%;
+}
+
+#game_panel {
+	display: none;
+}
+
+/*
+	Estilização e animação da tela de jogo
+*/
+
+#game_board {
+	color: white;
+	display: block;
+	width: 100%;
+	height: calc(100% - 75px);
+	position: absolute;
+	border-bottom: red solid 2px;
+
+}
+
+.equacao {
+	display: block;
+	background: transparent;
+	color: white;
+	font-size: large;
+	position: absolute;
+	animation: questao 30s ease-in-out;
+}
+
+@keyframes questao {
+	from {top: 0px;}
+	to {top: 100%;}
+}
+
