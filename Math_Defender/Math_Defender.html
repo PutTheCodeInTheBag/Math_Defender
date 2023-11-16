@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Math Defender</title>
+
+	<style type="text/css">
+
+		/* gamePanel */
+		
+/*
+	Estilização do input
+*/
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+	
+}
+
+input[type="number"]:active {
+	border: none;
+}
+
+input[type="number"]:focus {
+	caret-color: transparent;
+}
+
+#input_container {
+	width: 50vw;
+	height: 50px;
+	margin: auto;
+	background: linear-gradient(to right, rgba(42, 30, 92, 0.4), rgba(86, 136, 199, 0.4));
+	border-radius: 40px;
+	border: none;
+	position: fixed;
+	display: flex;
+	bottom: 1.5%;
+	left: 0;
+	right: 0;
+}
+
+#send_input {
+	border: none;
+	border-radius: 0 40px 40px 0;
+	width: 10%;
+	height: 50px;
+	background: transparent;
+	padding: 1%;
+	font-size: 100%;
+}
+
+#send_input:hover, #send_input:active {
+	border: 1px solid white;
+}
+
+#answer_input {
+	text-align: center;
+	color: white;
+	border: none;
+	border-radius: 40px 0 0 40px;
+	background: transparent;
+	width: 90%;
+}
+
+#game_panel {
+	display: none;
+}
+
+/*
+	Estilização e animação da tela de jogo
+*/
+
+#game_board {
+	color: green;
+	display: block;
+	width: 100%;
+	height: calc(100% - 75px);
+	position: absolute;
+	border-bottom: red solid 2px;
+
+}
+
+.equacao {
+	display: block;
+	background: transparent;
+	color: white;
+	font-size: large;
+	position: absolute;
+	animation: questao 30s ease-in-out;
+}
+
+@keyframes questao {
+	from {top: 0px;}
+	to {top: 100%;}
+}
+
+/* starfall */
+
+
+@keyframes falling {
+	from {top: 0px;}
+	to {top: 100%;}
+}
+
+#starfall_panel {
+	display: block;
+	z-index: 0;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.star {
+	display: block;
+	position: absolute;
+	top: 0;
+	background: white;
+}
+
+	/* style default */
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	width: 100vw;
+	height: 100vh;
+	color: white;
+	background: black;
+	font-weight: bold;
+	overflow: hidden;
+}
+
+button {
+	display: block;
+	padding: 10px;
+	border: solid white 5px;
+	background: transparent;
+	color: white;
+	margin: auto;
+	cursor: pointer;
+}
+
+label {
+	margin: 5px auto;
+	padding: 10px;
+	border: red solid 2px;
+	cursor: pointer;
+}
+
+input[type="radio"] {
+	-webkit-appearence: none;
+	appearance: none;
+}
+
+input[type="radio"]:checked+label {
+	border: green 2px solid;
+}
+
+#scores {
+	width: 100%;
+	height: 15%;
+	padding: 2% 0;
+	display: flex;
+	justify-content: space-around;
+	font-style: italic;
+}
+
+#buttons {
+	display: block;
+	position: absolute;
+	width: 50%;
+	height: 50vh;
+	margin: auto;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	top: 0;
+}
+
+
+#selected {
+	width: 20%;
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	margin: 5% auto;
+	padding: 5px;
+}
+
+#startGameButton {
+	font-size: large;
+	margin: 5% auto;
+	border-radius: 10px 10px 0 0;
+	box-shadow: 0 5px 4px 2px gray;
+}
+
+#startGameButton:hover {
+	background-color: #111;
+}
+
+#startGameButton:active {
+	transform: translateY(3px);
+	box-shadow: 0 2px 4px 2px gray;
+}
+
+#info {
+	display: block;
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	right: 0;
+	bottom: 0;
+	border: inset;
+}
+
+#info:active {
+	transform: scale(0.9);
+	box-shadow: inset 0 0 5px 2px gray;
+}
+
+#info_panel {
+	display: none;
+	z-index: 1;
+	background: black;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+#exit_info_panel {
+	margin: 0;
+}
+
+#info_panel h2 {
+	text-align: center;
+	font-weight: bold;
+	margin: 2% 0;
+}
+
+#info_panel p {
+	margin: 0 4%;
+}
+	</style>
+
+</head>
+<body>
+
+	<div id="starfall_panel"></div>
+
+	<div id="main_menu">
+
+		<div id="scores">
+		<h2 id="highscore">Highscore: 0</h2>
+		<h2 id="lastscore">Last Score: 0</h2>
+		</div>
+
+		<div id="buttons">
+
+			<button id="startGameButton" onclick="startGame()">
+				Começar o Jogo
+			</button>
+
+			<div id="difficulties">
+				<form id="selected">
+					
+					<input id="easyDiff" type="radio" name="difficulty" value="0" checked="true">
+					<label for="easyDiff">Fácil</label>
+					<input id="mediumDiff" type="radio" name="difficulty" value="1">
+					<label for="mediumDiff">Médio</label>
+					<input id="hardDiff" type="radio" name="difficulty" value="2">
+					<label for="hardDiff">Difícil</label>
+				</form>
+			</div>
+
+		</div>
+
+		<button id="info" onclick="openInfoPanel()">?</button>
+
+	</div>
+
+	<div id="info_panel">
+		<button id="exit_info_panel" onclick="exitInfoPanel()">X</button>
+		<h2>Como Jogar</h2>
+		<p>O jogo flui de forma bem simples, diversas equações matemáticas estão caindo do céu, ameaçando a vida dos estudantes de humanas, sendo assim, você deve eliminá-los antes que eles toquem a linha vermelha, como? Resolvendo as equações você mesmo.</p>
+		<h2>O que as dificuldades mudam?</h2>
+		<p>Mudar a dificuldade influencia apenas duas coisas:
+			<br><br>1) Os tipos de equação: Diferentes equações são adicionadas por nível, o nivel fácil possui apenas adição e subtração, o nível médio possui multiplicação, já o difícil tanto adiciona a divisão, quanto equações com casas decimais (Deve-se responder com apenas 1 casa decimal);
+			<br><br>2) A pontuação: Cada nível oferece uma quantidade de pontos fixa por questão, com a fácil dando apenas 5 pontos, a média 10 e a dificuldade difícil dando 15!</p>
+			
+	</div>
+
+	<div id="game_panel">
+		<div id="game_board"></div>
+		<div id="input_container">
+		<input id="answer_input" type="number" placeholder="">
+		<button id="send_input">=></button>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+				function exitInfoPanel() {
+					let panel = document.getElementById("info_panel");
+
+					panel.style.display = "none";
+				}
+
+				function openInfoPanel() {
+					let panel = document.getElementById("info_panel");
+
+					panel.style.display = "block";
+				}
+			</script>
+
+	<script type="text/javascript">
+
+		// Script do starfall
+
+
+var starAmmount = 25; // Quantidade máxima de estrelas na tela
+const mainbody = document.getElementById("starfall_panel"); // Inicializando a tag body no js
+let created = 0; // Conta a quantidade de estrelas criadas
+
+/** Retorna um valor inteiro de valor entre 5 - 9, feito para decidir o tamanho das estrelas*/
+
+function randomSize() {
+	return 5 + Math.floor(Math.random()*4);
+}
+
+/** Retorna um valor inteiro entre 5 - 17, feito para decidir a duração de cada estrela*/
+
+function randomDuration() {
+	return 5 + Math.floor(Math.random()*12);
+}
+
+/** Retorna um valor inteiro entre 0 e o tamanho atual da tela, feito para decidir uma posição aleatória para a estrela*/
+
+function randomX() {
+	return Math.floor(Math.random()*window.innerWidth);
+}
+
+/** Retorna um valor em decimal entre 0 - 1, que decide a opacidade de uma estrela*/
+
+function randomOpacity() {
+	return Math.random();
+}
+
+/** Cria uma estrela de tamanho, duração de animação e posição de forma aleatória*/
+
+function createStar() {
+	let size = randomSize(); // Define o tamanho da estrela
+	const star = document.createElement("div"); // Cria o elemento estrela
+	star.classList.add("star"); // Adiciona a classe star para a estrela
+	star.style.width = size+"px"; // Indica o width
+	star.style.height = size+"px"; // Indica o height
+	star.style.opacity = randomOpacity()+"";
+	star.style.right = randomX()+"px"; // Indica o quão longe da direita está
+	mainbody.appendChild(star); // Adiciona a estrela à tela
+	star.style.animation = "falling "+randomDuration()+"s ease-in-out"; // Adiciona uma animação para a estrela
+	star.addEventListener("animationend",e => {removeStar(star); createStar();}, false); // Verifica se a estrela terminou a sua animação
+}
+
+/** Remove a estrela que terminar a animação*/
+
+function removeStar(star) {
+	star.remove();
+}
+
+/** Cria um set de estrelas iniciais*/
+
+function massiveCreation() {
+	if(created < starAmmount) {
+		setTimeout(function() {createStar(); massiveCreation(); created++;}, Math.floor((1+Math.random())*1000));
+	}
+}
+
+// Chamando a função para aparecer estrelas desde o início
+
+massiveCreation();
+		
+	</script>
+
+	<script type="text/javascript"  src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+		$(gameBoard).keypress(function (event) {
+ 
+            let key = (event.keyCode ? event.keyCode : event.which);
+            let character = String.fromCharCode(key)
+            alert('You pressed key : ' + character);
+        });
+	</script>
+
+	<script type="text/javascript">
+		
+		// Script do painel de jogo
+
+
+const gameBoard = document.getElementById("game_board"); //  Tabuleiro das questões
+const gamePanel = document.getElementById("game_panel"); // Painel de jogo
+const mainMenu = document.getElementById("main_menu"); // Tela principal
+var creatorInterval; // função de intervalo de criação de equações
+var input = document.getElementById("answer_input"); // Input de resposta
+var inputButton = document.getElementById("send_input"); // Botão de envio de resposta
+var highscore = 0; // Pontuação máxima atingida
+var score = 0; // Pontuação atual da partida
+var difficulty = 0; // Dificuldade selecionada
+var questions = []; // Lista de questões na tela
+
+/** Carrega as pontuações salvas */
+
+function loadScores() {
+
+	if(localStorage.getItem("highscore") != null) {
+		highscore = localStorage.getItem("highscore");
+		document.getElementById("highscore").innerHTML = "Highscore: "+highscore;
+	}
+
+	else {
+		document.getElementById("highscore").innerHTML = "Highscore: 0";
+	}
+
+	if(localStorage.getItem("lastscore") != null) {
+		score = parseInt(localStorage.getItem("lastscore"));	
+		document.getElementById("lastscore").innerHTML = "Last Score: "+score;
+	}
+
+	else {
+		document.getElementById("lastscore").innerHTML = "Last Score: 0";
+	}
+
+}
+
+/** Salva as pontuações atuais */
+
+function saveScores() {
+	localStorage.setItem("lastscore", score);
+	if(score > highscore) {
+		highscore = score;
+		localStorage.setItem("highscore", highscore);
+	}
+}
+
+// Carregando as pontuações assim que entrar
+
+window.onload = () => {
+	loadScores();
+}
+
+input.addEventListener("keydown", e => sendAnswer(e)); // Adicionando evento da tecla enter
+inputButton.addEventListener("click", e => check()); // Enviando resposta pra confirmação
+
+/** Permite enviar a resposta usando a tecla Enter */
+
+function sendAnswer(e) {
+	gameBoard.innerHTML = e.code;
+	if(e.code == "Enter" || e.code == 13) check(); 
+}
+
+/** Verifica se a resposta enviada corresponde a uma das perguntas */
+
+function check() {
+	let answer = input.value;
+
+	questions.forEach((item) => {
+		if(item.getAnswer() == answer) {
+
+			score += 5 + (difficulty*5);
+			item.explode();
+		}
+	});
+
+	input.value = ""; // Resetando a resposta
+}
+
+/** Verifica a dificuldade que foi selecionada */
+
+function getDifficulty() {
+	let diff = [document.getElementById("easyDiff"), document.getElementById("mediumDiff"), document.getElementById("hardDiff")];
+
+	for(let i = 0; i < 3; i++) {
+		if(diff[i].checked) return parseInt(diff[i].value);
+	}
+	
+}
+
+/** Coleta as informações necessárias e desativa as telas que não são do jogo */
+
+function startGame() {
+
+	score = 0; // Reseta a pontuação
+
+	document.getElementById("starfall_panel").style.display = "none"; // Desabilitando as estrelas
+
+	difficulty = getDifficulty();
+
+	mainMenu.style.display = "none"; // Desabilitando o menu principal
+	gamePanel.style.display = "block"; // Habilitando o painel de jogo
+
+	input.focus(); // Setando o foco no input de resposta
+
+	creatorInterval = setInterval(() => {new CreateEquation()}, 5000 + Math.random()*2000);
+}
+
+function sum(decimals) {
+
+	let number1, number2;
+
+	if(decimals) {
+
+		number1 = parseFloat((Math.random()*100).toFixed(1));
+		number2 = parseFloat((Math.random()*100).toFixed(1));
+
+	}
+
+	else {
+
+		number1 = Math.floor(Math.random()*100);
+		number2 = Math.floor(Math.random()*100);
+
+	}
+
+
+	Question = {
+			number1 : number1,
+			number2 : number2,
+			operator : "+",
+			answer : number1 + number2
+		}
+
+	return Question;
+
+}
+
+function subtraction(decimals) {
+
+	let number1, number2;
+
+	if(decimals) {
+
+		number1 = parseFloat((Math.random()*100).toFixed(1));
+		number2 = parseFloat((Math.random()*100).toFixed(1));
+
+	}
+
+	else {
+
+		number1 = Math.floor(Math.random()*100);
+		number2 = Math.floor(Math.random()*100);
+
+	}
+
+	Question = {
+			number1 : number1,
+			number2 : number2,
+			operator : "-",
+			answer : number1 - number2
+		}
+
+	return Question;
+
+}
+
+function multiplication(decimals) {
+
+	let number1, number2;
+
+	if(decimals) {
+
+		number1 = parseFloat((Math.random()*20).toFixed(1));
+		number2 = parseFloat((Math.random()*20).toFixed(1));
+
+	}
+
+	else {
+
+		number1 = Math.floor(Math.random()*20);
+		number2 = Math.floor(Math.random()*20);
+
+	}
+
+	Question = {
+			number1 : number1,
+			number2 : number2,
+			operator : "*",
+			answer : number1 * number2
+		}
+
+	return Question;
+
+}
+
+function division() {
+
+	/* A multiplicação está sendo feita dessa forma porque
+	a operação de divisão junto a limitação de casas decimais
+	causa o número a ser arredondado de 3 formas diferentes, portanto
+	está sendo usado este método para aumentar a precisão da resposta*/
+
+	let answer = Math.floor((Math.random()*10));
+	let number2 = 1 + parseInt((Math.random()*50).toFixed(2)); // Adicionando um para impossibilitar que seja 0
+
+	Question = {
+			number1 : number2 * answer, // Dividendo
+			number2 : number2, // Divisor
+			operator : "/",
+			answer : answer // Quociente
+		}
+
+	return Question;
+
+}
+
+/** Decide e cria as questões */
+
+function selectQuestion() {
+
+	let questionType; // Inteiro que definirá tipo de equação
+	let decimals = false; // Decide se terá cáculo com numeros decimais
+	let newQuestion; // Objeto de questão
+
+	// Decidindo quais tipos de questão vão cair
+
+	switch(difficulty) {
+	case 0: questionType = Math.floor(Math.random()*2);
+		break;
+	case 1: questionType = Math.floor(Math.random()*3);
+		break;
+	case 2: questionType = Math.floor(Math.random()*4);
+		decimals = true;
+		break;
+	}
+
+	// Calculando a resposta e decidindo o operador
+
+	switch(questionType) {
+	case 0:
+	 newQuestion = sum(decimals);
+		break;
+	case 1:
+	 newQuestion = subtraction(decimals);
+		break;
+	case 2:
+	 newQuestion = multiplication(decimals);
+		break;
+	case 3:
+	 newQuestion = division();
+		break;
+	default: newQuestion.answer = sum(decimals);
+	}
+
+	return newQuestion;
+}
+
+/** Retorna um valor inteiro entre 50 e o tamanho da tela -100*/
+
+function randomPosition() {
+	return Math.floor(50 + Math.random()*(window.innerWidth - 100));
+}
+
+/** Função de fim de jogo*/
+
+function gameOver() {
+
+	clearInterval(creatorInterval);
+
+	// Removendo todos os itens da tela
+
+	questions.forEach((item) => {
+		item.questionText.remove();
+	});
+
+	saveScores(); // Salva a pontuação feita na partida
+	loadScores(); // Carrega a última pontuação na tela principal
+	questions = []; // Reseta a lista de questões
+	mainMenu.style.display = "block"; // Reabilitando o menu principal
+	gamePanel.style.display = "none"; // Desabilitando o painel de jogo
+	document.getElementById("starfall_panel").style.display = "block"; // Reabilitando as estrelas
+}
+
+/** Classe que contem todos os objetos de criação da questão */
+
+class CreateEquation {
+
+	newQuestion = selectQuestion();
+	questionText = document.createElement("h2");
+
+	/** Remove A questão da tela e da lista de questões */
+
+	explode() {
+		let index = questions.indexOf(this);
+		this.questionText.remove();
+		questions.splice(index, 1);
+	}
+
+	/** Retorna a resposta da questão para ser verificada */
+
+	getAnswer() {
+		return this.newQuestion.answer;
+	}
+
+	constructor() {
+
+		this.questionText.innerHTML = (this.newQuestion.number1 + "").concat(this.newQuestion.operator).concat(this.newQuestion.number2);
+
+		this.questionText.classList.add("equacao");
+		this.questionText.style.left = randomPosition() + "px";
+		this.questionText.addEventListener("animationend",e => gameOver());
+		console.log(this.newQuestion.answer);
+		questions.push(this);
+
+		gameBoard.appendChild(this.questionText);
+	}
+}
+
+	</script>
+
+</body>
+</html>
