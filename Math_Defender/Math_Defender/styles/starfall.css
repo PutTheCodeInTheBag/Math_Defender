@@ -1,0 +1,20 @@
+
+@keyframes falling {
+	from {top: 0px;}
+	to {top: 100%;}
+}
+
+#starfall_panel {
+	display: block;
+	z-index: 0;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.star {
+	display: block;
+	position: absolute;
+	top: 0;
+	background: white;
+}

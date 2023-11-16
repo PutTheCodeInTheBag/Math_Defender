@@ -1,0 +1,127 @@
+@import "starfall.css";
+@import "gamePanel.css";
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	width: 100vw;
+	height: 100vh;
+	color: white;
+	background: black;
+	font-weight: bold;
+	overflow: hidden;
+}
+
+button {
+	display: block;
+	padding: 10px;
+	border: solid white 5px;
+	background: transparent;
+	color: white;
+	margin: auto;
+	cursor: pointer;
+}
+
+label {
+	margin: 5px auto;
+	padding: 10px;
+	border: red solid 2px;
+	cursor: pointer;
+}
+
+input[type="radio"] {
+	-webkit-appearence: none;
+	appearance: none;
+}
+
+input[type="radio"]:checked+label {
+	border: green 2px solid;
+}
+
+#scores {
+	width: 100%;
+	height: 15%;
+	padding: 2% 0;
+	display: flex;
+	justify-content: space-around;
+	font-style: italic;
+}
+
+#buttons {
+	display: block;
+	position: absolute;
+	width: 50%;
+	height: 50vh;
+	margin: auto;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	top: 0;
+}
+
+
+#selected {
+	width: 20%;
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	margin: 5% auto;
+	padding: 5px;
+}
+
+#startGameButton {
+	font-size: large;
+	margin: 5% auto;
+	border-radius: 10px 10px 0 0;
+	box-shadow: 0 5px 4px 2px gray;
+}
+
+#startGameButton:hover {
+	background-color: #111;
+}
+
+#startGameButton:active {
+	transform: translateY(3px);
+	box-shadow: 0 2px 4px 2px gray;
+}
+
+#info {
+	display: block;
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	right: 0;
+	bottom: 0;
+	border: inset;
+}
+
+#info:active {
+	transform: scale(0.9);
+	box-shadow: inset 0 0 5px 2px gray;
+}
+
+#info_panel {
+	display: none;
+	z-index: 1;
+	background: black;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+#exit_info_panel {
+	margin: 0;
+}
+
+#info_panel h2 {
+	text-align: center;
+	font-weight: bold;
+	margin: 2% 0;
+}
+
+#info_panel p {
+	margin: 0 4%;
+}
