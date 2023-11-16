@@ -2,6 +2,7 @@
 const gameBoard = document.getElementById("game_board"); //  Tabuleiro das questões
 const gamePanel = document.getElementById("game_panel"); // Painel de jogo
 const mainMenu = document.getElementById("main_menu"); // Tela principal
+var creatorInterval; // função de intervalo de criação de equações
 var input = document.getElementById("answer_input"); // Input de resposta
 var inputButton = document.getElementById("send_input"); // Botão de envio de resposta
 var highscore = 0; // Pontuação máxima atingida
@@ -12,10 +13,25 @@ var questions = []; // Lista de questões na tela
 /** Carrega as pontuações salvas */
 
 function loadScores() {
-	highscore = localStorage.getItem("highscore");
-	score = parseInt(localStorage.getItem("lastscore"));
-	document.getElementById("highscore").innerHTML = "Highscore: "+highscore;
-	document.getElementById("lastscore").innerHTML = "Last Score: "+score;
+
+	if(localStorage.getItem("highscore") != null) {
+		highscore = localStorage.getItem("highscore");
+		document.getElementById("highscore").innerHTML = "Highscore: "+highscore;
+	}
+
+	else {
+		document.getElementById("highscore").innerHTML = "Highscore: 0";
+	}
+
+	if(localStorage.getItem("lastscore") != null) {
+		score = parseInt(localStorage.getItem("lastscore"));	
+		document.getElementById("lastscore").innerHTML = "Last Score: "+score;
+	}
+
+	else {
+		document.getElementById("lastscore").innerHTML = "Last Score: 0";
+	}
+
 }
 
 /** Salva as pontuações atuais */
@@ -51,10 +67,6 @@ function check() {
 	questions.forEach((item) => {
 		if(item.getAnswer() == answer) {
 
-			for(i = 0; i < 2; i++) {
-				setTimeout(() => {new CreateEquation()}, 500 + Math.floor(Math.random()*2500));
-			}
-
 			score += 5 + (difficulty*5);
 			item.explode();
 		}
@@ -89,13 +101,27 @@ function startGame() {
 
 	input.focus(); // Setando o foco no input de resposta
 
-	new CreateEquation();
+	creatorInterval = setInterval(() => {new CreateEquation()}, 5000 + Math.random()*2000);
 }
 
-function sum() {
+function sum(decimals) {
 
-	let number1 = Math.floor(Math.random()*100);
-	let number2 = Math.floor(Math.random()*100);
+	let number1, number2;
+
+	if(decimals) {
+
+		number1 = parseFloat((Math.random()*100).toFixed(1));
+		number2 = parseFloat((Math.random()*100).toFixed(1));
+
+	}
+
+	else {
+
+		number1 = Math.floor(Math.random()*100);
+		number2 = Math.floor(Math.random()*100);
+
+	}
+
 
 	Question = {
 			number1 : number1,
@@ -108,10 +134,23 @@ function sum() {
 
 }
 
-function subtraction() {
+function subtraction(decimals) {
 
-	let number1 = Math.floor(Math.random()*100);
-	let number2 = Math.floor(Math.random()*100);
+	let number1, number2;
+
+	if(decimals) {
+
+		number1 = parseFloat((Math.random()*100).toFixed(1));
+		number2 = parseFloat((Math.random()*100).toFixed(1));
+
+	}
+
+	else {
+
+		number1 = Math.floor(Math.random()*100);
+		number2 = Math.floor(Math.random()*100);
+
+	}
 
 	Question = {
 			number1 : number1,
@@ -124,10 +163,23 @@ function subtraction() {
 
 }
 
-function multiplication() {
+function multiplication(decimals) {
 
-	let number1 =  Math.floor(Math.random()*20);
-	let number2 =  Math.floor(Math.random()*20);
+	let number1, number2;
+
+	if(decimals) {
+
+		number1 = parseFloat((Math.random()*20).toFixed(1));
+		number2 = parseFloat((Math.random()*20).toFixed(1));
+
+	}
+
+	else {
+
+		number1 = Math.floor(Math.random()*20);
+		number2 = Math.floor(Math.random()*20);
+
+	}
 
 	Question = {
 			number1 : number1,
@@ -166,7 +218,7 @@ function division() {
 function selectQuestion() {
 
 	let questionType; // Inteiro que definirá tipo de equação
-
+	let decimals = false; // Decide se terá cáculo com numeros decimais
 	let newQuestion; // Objeto de questão
 
 	// Decidindo quais tipos de questão vão cair
@@ -177,6 +229,7 @@ function selectQuestion() {
 	case 1: questionType = Math.floor(Math.random()*3);
 		break;
 	case 2: questionType = Math.floor(Math.random()*4);
+		decimals = true;
 		break;
 	}
 
@@ -184,18 +237,18 @@ function selectQuestion() {
 
 	switch(questionType) {
 	case 0:
-	 newQuestion = sum();
+	 newQuestion = sum(decimals);
 		break;
 	case 1:
-	 newQuestion = subtraction();
+	 newQuestion = subtraction(decimals);
 		break;
 	case 2:
-	 newQuestion = multiplication();
+	 newQuestion = multiplication(decimals);
 		break;
 	case 3:
 	 newQuestion = division();
 		break;
-	default: newQuestion.answer = sum();
+	default: newQuestion.answer = sum(decimals);
 	}
 
 	return newQuestion;
@@ -210,6 +263,8 @@ function randomPosition() {
 /** Função de fim de jogo*/
 
 function gameOver() {
+
+	clearInterval(creatorInterval);
 
 	// Removendo todos os itens da tela
 
