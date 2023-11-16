@@ -92,27 +92,72 @@ function startGame() {
 	new CreateEquation();
 }
 
-function sum(newQuestion) {
+function sum() {
 
-	return newQuestion.number1 + newQuestion.number2;
+	let number1 = Math.floor(Math.random()*100);
+	let number2 = Math.floor(Math.random()*100);
 
-}
+	Question = {
+			number1 : number1,
+			number2 : number2,
+			operator : "+",
+			answer : number1 + number2
+		}
 
-function subtraction(newQuestion) {
-
-	return newQuestion.number1 - newQuestion.number2;
-
-}
-
-function multiplication(newQuestion) {
-
-	return newQuestion.number1 * newQuestion.number2;
+	return Question;
 
 }
 
-function division(newQuestion) {
+function subtraction() {
 
-	return parseInt((newQuestion.number1 / newQuestion.number2).toFixed(1));
+	let number1 = Math.floor(Math.random()*100);
+	let number2 = Math.floor(Math.random()*100);
+
+	Question = {
+			number1 : number1,
+			number2 : number2,
+			operator : "-",
+			answer : number1 - number2
+		}
+
+	return Question;
+
+}
+
+function multiplication() {
+
+	let number1 =  Math.floor(Math.random()*20);
+	let number2 =  Math.floor(Math.random()*20);
+
+	Question = {
+			number1 : number1,
+			number2 : number2,
+			operator : "*",
+			answer : number1 * number2
+		}
+
+	return Question;
+
+}
+
+function division() {
+
+	/* A multiplicação está sendo feita dessa forma porque
+	a operação de divisão junto a limitação de casas decimais
+	causa o número a ser arredondado de 3 formas diferentes, portanto
+	está sendo usado este método para aumentar a precisão da resposta*/
+
+	let answer = Math.floor((Math.random()*10));
+	let number2 = 1 + parseInt((Math.random()*50).toFixed(2)); // Adicionando um para impossibilitar que seja 0
+
+	Question = {
+			number1 : number2 * answer, // Dividendo
+			number2 : number2, // Divisor
+			operator : "/",
+			answer : answer // Quociente
+		}
+
+	return Question;
 
 }
 
@@ -120,29 +165,9 @@ function division(newQuestion) {
 
 function selectQuestion() {
 
-	let questionType;
+	let questionType; // Inteiro que definirá tipo de equação
 
-	let newQuestion;
-
-	// Decidindo se a questão vai ter decimal
-
-	if(difficulty == 2) {
-		newQuestion = {
-			number1 : parseInt((Math.random()*100).toFixed(1)),
-			number2 : parseInt((Math.random()*100).toFixed(1)),
-			operator : "",
-			answer : 0
-		};
-	}
-
-	else {
-		newQuestion = {
-			number1 : Math.floor(Math.random()*100),
-			number2 : Math.floor(Math.random()*100),
-			operator : "",
-			answer : 0
-		}
-	}
+	let newQuestion; // Objeto de questão
 
 	// Decidindo quais tipos de questão vão cair
 
@@ -159,23 +184,18 @@ function selectQuestion() {
 
 	switch(questionType) {
 	case 0:
-	 newQuestion.answer = sum(newQuestion);
-	 newQuestion.operator = " + ";
+	 newQuestion = sum();
 		break;
 	case 1:
-	 newQuestion.answer = subtraction(newQuestion);
-	 newQuestion.operator = " - ";
+	 newQuestion = subtraction();
 		break;
 	case 2:
-	 newQuestion.answer = multiplication(newQuestion);
-	 newQuestion.operator = " * ";
+	 newQuestion = multiplication();
 		break;
 	case 3:
-	 newQuestion.answer = division(newQuestion);
-	 newQuestion.operator = " / ";
+	 newQuestion = division();
 		break;
-	default: newQuestion.answer = sum(newQuestion);
-	 newQuestion.operator = " + ";
+	default: newQuestion.answer = sum();
 	}
 
 	return newQuestion;
